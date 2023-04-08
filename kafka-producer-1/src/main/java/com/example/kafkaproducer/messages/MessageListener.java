@@ -20,7 +20,7 @@ public class MessageListener {
 
     @Transactional
     @KafkaListener(id = "producer_1", topics = {KafkaConfig.TOPIC_1_RESPONSE, KafkaConfig.TOPIC_2_RESPONSE})
-    public void paymentListener(String messagePayloadJson, @Header("type") String messageType) throws Exception {
+    public void messageReceiver(String messagePayloadJson, @Header("type") String messageType) throws Exception {
         log.info(messageType);
         if ("Topic1Event".equals(messageType)) {
             topic1Received(objectMapper.readValue(messagePayloadJson, new TypeReference<>() {
