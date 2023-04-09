@@ -19,6 +19,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class KafkaConfig {
 
+    public static final String TOPIC_ALL_REQUEST = "topic_all_request";
+    public static final String TOPIC_ALL_RESPONSE = "topic_all_response";
+
     public static final String TOPIC_1_REQUEST = "topic_1_request";
     public static final String TOPIC_2_REQUEST = "topic_2_request";
     public static final String TOPIC_1_RESPONSE = "topic_1_response";
@@ -49,7 +52,7 @@ public class KafkaConfig {
     @Bean
     public KafkaTemplate<String, String> kafkaTemplate() {
         // This is the object we employ to send messages to Kafka
-        // the KafkaTemplate to have a plain String key, and an Object as value. The reason to have Object as a value
+        // the KafkaTemplate to have a plain String key, and an Object as value. The content to have Object as a value
         // is that we want to send multiple object types with the same template.
         return new KafkaTemplate<>(producerFactory());
     }
@@ -76,4 +79,13 @@ public class KafkaConfig {
         return TopicBuilder.name(TOPIC_2_RESPONSE).partitions(1).replicas(1).build();
     }
 
+    @Bean
+    public NewTopic TopicAllRequest() {
+        return TopicBuilder.name(TOPIC_ALL_REQUEST).partitions(1).replicas(1).build();
+    }
+
+    @Bean
+    public NewTopic TopicAllResponse() {
+        return TopicBuilder.name(TOPIC_ALL_RESPONSE).partitions(1).replicas(1).build();
+    }
 }

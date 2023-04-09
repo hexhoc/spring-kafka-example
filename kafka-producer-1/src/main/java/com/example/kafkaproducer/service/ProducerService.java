@@ -16,26 +16,22 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProducerService {
     private final MessageSender messageSender;
-    private final ObjectMapper objectMapper;
 
-    public void produce(String topicName) {
-        log.info("Produce messages");
-        if (topicName.equals("all")) {
-            sendMessage(KafkaConfig.TOPIC_1_REQUEST);
-            sendMessage(KafkaConfig.TOPIC_2_REQUEST);
+    public void produce(String topicName, String content) {
+        log.info("SEND TO " + topicName);
+
+        String messageType;
+        if (topicName.equals(KafkaConfig.TOPIC_ALL_REQUEST)) {
+            messageType = "for_all_consumer_command";
         } else {
-            sendMessage(topicName);
+            messageType = "concrete_consumer_command";
         }
-    }
-
-    private void sendMessage(String topicName) {
-        log.info("producer-1 send to " + topicName);
 
         messageSender.send(
                 new Message<>(
-                        "TopicCommand",
+                        messageType,
                         UUID.randomUUID().toString(),
-                        new TopicCommandPayload(UUID.randomUUID().toString(), "TEST")),
+                        new TopicCommandPayload(UUID.randomUUID().toString(), content)),
                 topicName);
     }
 }

@@ -12,7 +12,7 @@ public class Message<T> {
 
     // Cloud Events compliant
     private String type;
-    private String id = UUID.randomUUID().toString(); // unique id of this message
+    private String id = UUID.randomUUID().toString(); // unique id of this content
     private String source = "producer-1";
     private LocalDateTime time = LocalDateTime.now();
     private T data;
@@ -39,6 +39,6 @@ public class Message<T> {
 
     @Override
     public String toString() {
-        return "Message [type=" + type + ", id=" + id + ", time=" + time + ", data=" + data + ", correlationid=" + correlationid + ", traceid=" + traceid + "]";
+        return "Message [data=" + data + "type=" + type + ", id=" + id + ", time=" + time + ", correlationid=" + correlationid + ", traceid=" + traceid + "]";
     }
 }

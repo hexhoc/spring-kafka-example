@@ -40,6 +40,6 @@ public class Message<T> {
 
     @Override
     public String toString() {
-        return "Message [type=" + type + ", id=" + id + ", time=" + time + ", data=" + data + ", correlationid=" + correlationid + ", traceid=" + traceid + "]";
+        return "Message [data=" + data + "type=" + type + ", id=" + id + ", time=" + time + ", correlationid=" + correlationid + ", traceid=" + traceid + "]";
     }
 }

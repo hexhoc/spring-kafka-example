@@ -1,6 +1,7 @@
 package com.example.kafkaconsumer.messages;
 
 import com.example.kafkaconsumer.config.KafkaConfig;
+import com.example.kafkaconsumer.messages.payload.command.TopicCommandPayload;
 import com.example.kafkaconsumer.messages.payload.event.TopicEventPayload;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,10 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 
 @Component
 @RequiredArgsConstructor
@@ -20,23 +25,42 @@ public class MessageListener {
     private final ObjectMapper objectMapper;
 
     @Transactional
-    @KafkaListener(id = "consumer_1", topics = KafkaConfig.TOPIC_REQUEST)
+    @KafkaListener(id = "consumer_1", topics = {KafkaConfig.TOPIC_REQUEST, KafkaConfig.TOPIC_ALL_REQUEST})
     public void messageReceiver(String messagePayloadJson, @Header("type") String messageType) throws Exception {
-        topicReceived(objectMapper.readValue(messagePayloadJson, new TypeReference<>() {
-        }));
+//        log.info("MESSAGE TYPE: " + messageType);
+        if (messageType.equals("for_all_consumer_command")) {
+            topicReceived(objectMapper.readValue(messagePayloadJson, new TypeReference<>() {}), KafkaConfig.TOPIC_ALL_RESPONSE);
+        }else {
+            topicReceived(objectMapper.readValue(messagePayloadJson, new TypeReference<>() {}), KafkaConfig.TOPIC_RESPONSE);
+        }
     }
 
-    public void topicReceived(Message<TopicEventPayload> message) {
-        log.info("consumer-1 get from producer-1");
-        log.info("Correlated " + message);
+    public void topicReceived(Message<TopicCommandPayload> message, String topicName) {
+        log.info("GET FROM PRODUCER-1: " + message.getData().content());
+
+        // PROCESS MESSAGE
+        processMessage(message.getData().content());
 
         messageSender.send(
                 new Message<>(
                         "Topic1Event",
                         message.getTraceid(),
-                        new TopicEventPayload(message.getData().refId())),
-                KafkaConfig.TOPIC_RESPONSE
+                        new TopicEventPayload(message.getData().refId(), message.getData().content())),
+                topicName
         );
     }
 
+    public void processMessage(String data) {
+        // write date to file
+        try {
+            FileWriter writer = new FileWriter("kafka-consumer-1/file.txt", true);
+            BufferedWriter bufferedWriter = new BufferedWriter(writer);
+
+            bufferedWriter.write(data);
+            bufferedWriter.newLine();
+            bufferedWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

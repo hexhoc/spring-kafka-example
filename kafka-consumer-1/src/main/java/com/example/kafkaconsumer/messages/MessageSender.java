@@ -25,7 +25,7 @@ public class MessageSender {
             // avoid too much magic and transform ourselves
             String jsonMessage = objectMapper.writeValueAsString(m);
 
-            // wrap into a proper message for Kafka including a header
+            // wrap into a proper content for Kafka including a header
             ProducerRecord<String, String> record = new ProducerRecord<String, String>(topicName, jsonMessage);
             record.headers().add("type", m.getType().getBytes());
 
@@ -37,7 +37,7 @@ public class MessageSender {
                         result.getRecordMetadata().offset());
             });
         } catch (Exception e) {
-            throw new RuntimeException("Could not transform and send message: " + e.getMessage(), e);
+            throw new RuntimeException("Could not transform and send content: " + e.getMessage(), e);
         }
     }
 }

@@ -19,9 +19,9 @@ public class MessageListener {
     private final ObjectMapper objectMapper;
 
     @Transactional
-    @KafkaListener(id = "producer_1", topics = {KafkaConfig.TOPIC_1_RESPONSE, KafkaConfig.TOPIC_2_RESPONSE})
+    @KafkaListener(id = "producer_1", topics = {KafkaConfig.TOPIC_1_RESPONSE, KafkaConfig.TOPIC_2_RESPONSE, KafkaConfig.TOPIC_ALL_RESPONSE})
     public void messageReceiver(String messagePayloadJson, @Header("type") String messageType) throws Exception {
-        log.info(messageType);
+//        log.info("MESSAGE TYPE: " + messageType);
         if ("Topic1Event".equals(messageType)) {
             topic1Received(objectMapper.readValue(messagePayloadJson, new TypeReference<>() {
             }));
@@ -34,12 +34,10 @@ public class MessageListener {
     }
 
     public void topic1Received(Message<TopicEventPayload> message) {
-        log.info("producer-1 get from consumer-1");
-        log.info("Correlated " + message);
+        log.info("GET FROM CONSUMER-1: " + message.getData().content());
     }
 
     public void topic2Received(Message<TopicEventPayload> message) {
-        log.info("producer-1 get from consumer-2");
-        log.info("Correlated " + message);
+        log.info("GET FROM CONSUMER-2: " + message.getData().content());
     }
 }
