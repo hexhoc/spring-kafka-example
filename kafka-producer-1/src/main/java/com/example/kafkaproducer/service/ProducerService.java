@@ -34,4 +34,27 @@ public class ProducerService {
                         new TopicCommandPayload(UUID.randomUUID().toString(), content)),
                 topicName);
     }
+
+    public void produceBatchMessages(String topicName, Integer messageCount, Integer timeGap) {
+        String messageType = "for_all_consumer_command";
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < messageCount; i++) {
+            messageSender.send(
+                    new Message<>(
+                            messageType,
+                            UUID.randomUUID().toString(),
+                            new TopicCommandPayload(UUID.randomUUID().toString(), String.valueOf(i))),
+                    topicName);
+
+            if (timeGap > 0) {
+                try {
+                    Thread.sleep(timeGap);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        System.out.println(System.currentTimeMillis()-startTime);
+    }
 }

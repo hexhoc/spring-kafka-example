@@ -31,11 +31,11 @@ public class MessageSender {
 
             // and send it
             var future = kafkaTemplate.send(record);
-            future.whenComplete((result, throwable) -> {
-                log.info("Message [{}] delivered with offset {}",
-                        record,
-                        result.getRecordMetadata().offset());
-            });
+//            future.whenComplete((result, throwable) -> {
+//                log.info("Message [{}] delivered with offset {}",
+//                        record,
+//                        result.getRecordMetadata().offset());
+//            });
         } catch (Exception e) {
             throw new RuntimeException("Could not transform and send content: " + e.getMessage(), e);
         }

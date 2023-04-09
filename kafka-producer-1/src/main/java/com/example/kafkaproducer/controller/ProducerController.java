@@ -19,4 +19,12 @@ public class ProducerController {
         return ResponseEntity.ok("OK");
     }
 
+    @GetMapping("/highload/{topicName}")
+    public ResponseEntity<String> sendBatchMessages(
+            @PathVariable(name = "topicName") String topicName,
+            @RequestParam(name = "messageCount", defaultValue = "1000") Integer messageCount,
+            @RequestParam(name = "timeGap", defaultValue = "0") Integer timeGap) {
+        producerService.produceBatchMessages(topicName, messageCount, timeGap);
+        return ResponseEntity.ok("OK");
+    }
 }
