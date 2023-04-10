@@ -11,6 +11,10 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 
 @Component
 @RequiredArgsConstructor
@@ -35,9 +39,27 @@ public class MessageListener {
 
     public void topic1Received(Message<TopicEventPayload> message) {
         log.info("GET FROM CONSUMER-1: " + message.getData().content());
+        // PROCESS MESSAGE
+        processMessage(message.getData().content());
     }
 
     public void topic2Received(Message<TopicEventPayload> message) {
         log.info("GET FROM CONSUMER-2: " + message.getData().content());
+        // PROCESS MESSAGE
+        processMessage(message.getData().content());
+    }
+
+    public void processMessage(String data) {
+        // write date to file
+        try {
+            FileWriter writer = new FileWriter("kafka-producer-1/file.txt", true);
+            BufferedWriter bufferedWriter = new BufferedWriter(writer);
+
+            bufferedWriter.write(data);
+            bufferedWriter.newLine();
+            bufferedWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

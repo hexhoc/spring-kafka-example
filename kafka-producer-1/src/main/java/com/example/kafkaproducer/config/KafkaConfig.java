@@ -61,31 +61,56 @@ public class KafkaConfig {
     // to create a topic with the given configuration
     @Bean
     public NewTopic Topic1Request() {
-        return TopicBuilder.name(TOPIC_1_REQUEST).partitions(1).replicas(1).build();
+        return TopicBuilder.name(TOPIC_1_REQUEST)
+                .partitions(1)
+                .replicas(1)
+                .configs(Map.of("retention.ms", "86400000", "cleanup.policy", "delete"))
+                .build();
     }
 
     @Bean
     public NewTopic Topic2Request() {
-        return TopicBuilder.name(TOPIC_2_REQUEST).partitions(1).replicas(1).build();
+        return TopicBuilder.name(TOPIC_2_REQUEST)
+                .partitions(1)
+                .replicas(1)
+                .configs(Map.of("retention.ms", "86400000", "cleanup.policy", "delete"))
+                .build();
     }
 
     @Bean
     public NewTopic Topic1Response() {
-        return TopicBuilder.name(TOPIC_1_RESPONSE).partitions(1).replicas(1).build();
+        return TopicBuilder.name(TOPIC_1_RESPONSE)
+                .partitions(1)
+                .replicas(1)
+                .configs(Map.of("retention.ms", "86400000", "cleanup.policy", "delete"))
+                .build();
     }
 
     @Bean
     public NewTopic Topic2Response() {
-        return TopicBuilder.name(TOPIC_2_RESPONSE).partitions(1).replicas(1).build();
+        return TopicBuilder.name(TOPIC_2_RESPONSE)
+                .partitions(1)
+                .replicas(1)
+                .configs(Map.of("retention.ms", "86400000", "cleanup.policy", "delete"))
+                .build();
     }
 
     @Bean
     public NewTopic TopicAllRequest() {
-        return TopicBuilder.name(TOPIC_ALL_REQUEST).partitions(1).replicas(1).build();
+        return TopicBuilder.name(TOPIC_ALL_REQUEST)
+                .partitions(1)
+                .replicas(1)
+                .configs(Map.of("retention.ms", "86400000", "cleanup.policy", "delete"))
+                .build();
     }
 
     @Bean
     public NewTopic TopicAllResponse() {
-        return TopicBuilder.name(TOPIC_ALL_RESPONSE).partitions(1).replicas(1).build();
+
+        return TopicBuilder.name(TOPIC_ALL_RESPONSE)
+                .partitions(1)
+                .replicas(1)
+                .configs(Map.of("retention.ms", "86400000", "cleanup.policy", "delete"))
+                .build();
     }
 }
