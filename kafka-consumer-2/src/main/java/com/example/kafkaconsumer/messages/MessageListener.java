@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,16 +27,19 @@ public class MessageListener {
 
     @Transactional
     @KafkaListener(id = "consumer_2", groupId = "consumer_2", topics = {KafkaConfig.TOPIC_REQUEST, KafkaConfig.TOPIC_ALL_REQUEST})
-    public void messageReceiver(String messagePayloadJson, @Header("type") String messageType) throws Exception {
+    public void messageReceiver(String messagePayloadJson, Acknowledgment acknowledgment, @Header("type") String messageType) throws Exception {
 //        log.info("MESSAGE TYPE: " + messageType);
         if (messageType.equals("for_all_consumer_command")) {
-            topicReceived(objectMapper.readValue(messagePayloadJson, new TypeReference<>() {}), KafkaConfig.TOPIC_ALL_RESPONSE);
+            consumeMessage(objectMapper.readValue(messagePayloadJson, new TypeReference<>() {}), KafkaConfig.TOPIC_ALL_RESPONSE);
         }else {
-            topicReceived(objectMapper.readValue(messagePayloadJson, new TypeReference<>() {}), KafkaConfig.TOPIC_RESPONSE);
+            consumeMessage(objectMapper.readValue(messagePayloadJson, new TypeReference<>() {}), KafkaConfig.TOPIC_RESPONSE);
         }
+
+        //  manually acknowledgment
+        acknowledgment.acknowledge();
     }
 
-    public void topicReceived(Message<TopicCommandPayload> message, String topicName) {
+    public void consumeMessage(Message<TopicCommandPayload> message, String topicName) {
         log.info("GET FROM PRODUCER-1: " + message.getData().content());
 
         // PROCESS MESSAGE
