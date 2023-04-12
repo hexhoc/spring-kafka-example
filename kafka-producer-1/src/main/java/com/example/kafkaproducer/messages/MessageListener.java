@@ -23,7 +23,7 @@ public class MessageListener {
     private final ObjectMapper objectMapper;
 
     @Transactional
-    @KafkaListener(id = "producer_1", topics = {KafkaConfig.TOPIC_1_RESPONSE, KafkaConfig.TOPIC_2_RESPONSE, KafkaConfig.TOPIC_ALL_RESPONSE})
+    @KafkaListener(id = "producer_1", groupId = "producer_1", topics = {KafkaConfig.TOPIC_1_RESPONSE, KafkaConfig.TOPIC_2_RESPONSE, KafkaConfig.TOPIC_ALL_RESPONSE})
     public void messageReceiver(String messagePayloadJson, @Header("type") String messageType) throws Exception {
 //        log.info("MESSAGE TYPE: " + messageType);
         if ("Topic1Event".equals(messageType)) {

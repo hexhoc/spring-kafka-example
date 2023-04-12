@@ -23,8 +23,9 @@ public class ProducerController {
     public ResponseEntity<String> sendBatchMessages(
             @PathVariable(name = "topicName") String topicName,
             @RequestParam(name = "messageCount", defaultValue = "1000") Integer messageCount,
+            @RequestParam(name = "startValue", defaultValue = "0") Integer startValue,
             @RequestParam(name = "timeGap", defaultValue = "0") Integer timeGap) {
-        producerService.produceBatchMessages(topicName, messageCount, timeGap);
+        producerService.produceBatchMessages(topicName, messageCount, startValue, timeGap);
         return ResponseEntity.ok("OK");
     }
 }

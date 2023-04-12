@@ -35,12 +35,9 @@ public class KafkaConfig {
         // we build our map passing the default values for the producer and overriding the default Kafka key and value serializers.
         // The producer will serialize keys as Strings using the Kafka library’s StringSerializer and will do the same
         // for values but this time using JSON, with a JsonSerializer, in this case provided by Spring Kafka.
-        Map<String, Object> props =
-                new HashMap<>(kafkaProperties.buildProducerProperties());
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                StringSerializer.class);
+        Map<String, Object> props = new HashMap<>(kafkaProperties.buildProducerProperties());
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         return props;
     }
 

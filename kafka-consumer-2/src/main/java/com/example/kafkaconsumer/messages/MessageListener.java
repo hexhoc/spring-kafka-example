@@ -25,7 +25,7 @@ public class MessageListener {
     private final ObjectMapper objectMapper;
 
     @Transactional
-    @KafkaListener(id = "consumer_2", topics = {KafkaConfig.TOPIC_REQUEST, KafkaConfig.TOPIC_ALL_REQUEST})
+    @KafkaListener(id = "consumer_2", groupId = "consumer_2", topics = {KafkaConfig.TOPIC_REQUEST, KafkaConfig.TOPIC_ALL_REQUEST})
     public void messageReceiver(String messagePayloadJson, @Header("type") String messageType) throws Exception {
 //        log.info("MESSAGE TYPE: " + messageType);
         if (messageType.equals("for_all_consumer_command")) {
@@ -45,7 +45,7 @@ public class MessageListener {
                 new Message<>(
                         "Topic2Event",
                         message.getTraceid(),
-                        new TopicEventPayload(message.getData().refId(), message.getData().content())),
+                        new TopicEventPayload(message.getData().refId(), "TOPIC_2: " + message.getData().content())),
                 topicName
         );
     }
