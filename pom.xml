@@ -29,9 +29,9 @@
     </properties>
 
     <modules>
-        <module>kafka-consumer-1</module>
-        <module>kafka-consumer-2</module>
-        <module>kafka-producer-1</module>
+        <module>consumer-1</module>
+        <module>consumer-2</module>
+        <module>producer-1</module>
     </modules>
 
     <dependencyManagement>
