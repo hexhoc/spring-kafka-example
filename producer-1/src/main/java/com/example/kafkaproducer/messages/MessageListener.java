@@ -1,7 +1,9 @@
 package com.example.kafkaproducer.messages;
 
 import com.example.kafkaproducer.config.KafkaConfig;
+import com.example.kafkaproducer.entity.EventProcessing;
 import com.example.kafkaproducer.messages.payload.event.TopicEventPayload;
+import com.example.kafkaproducer.repository.EventProcessingRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Optional;
 
 
 @Component
@@ -20,34 +23,29 @@ import java.io.IOException;
 @Log4j2
 public class MessageListener {
     private final ObjectMapper objectMapper;
+    private final EventProcessingRepository eventProcessingRepository;
 
     @KafkaListener(id = "producer_1", groupId = "producer_1", topics = {KafkaConfig.TOPIC_1_RESPONSE, KafkaConfig.TOPIC_2_RESPONSE, KafkaConfig.TOPIC_ALL_RESPONSE})
     public void messageReceiver(String messagePayloadJson, @Header("type") String messageType) throws Exception {
 //        log.info("MESSAGE TYPE: " + messageType);
-        if ("Topic1Event".equals(messageType)) {
-            topic1Received(objectMapper.readValue(messagePayloadJson, new TypeReference<>() {
-            }));
-        } else if ("Topic2Event".equals(messageType)) {
-            topic2Received(objectMapper.readValue(messagePayloadJson, new TypeReference<>() {
-            }));
+        Message<TopicEventPayload> message = objectMapper.readValue(messagePayloadJson, new TypeReference<>() {});
+        if ("consumer_1_event".equals(messageType)) {
+            log.info("GET FROM CONSUMER-1: " + message.getData().content());
+        } else if ("consumer_2_event".equals(messageType)) {
+            log.info("GET FROM CONSUMER-2: " + message.getData().content());
         } else {
             log.info("Ignored message of type " + messageType);
         }
+
+        processMessage(message.getTraceid(), message.getData().content());
     }
 
-    public void topic1Received(Message<TopicEventPayload> message) {
-        log.info("GET FROM CONSUMER-1: " + message.getData().content());
-        // PROCESS MESSAGE
-        processMessage(message.getData().content());
+    public void processMessage(String messageId, String data) {
+        writeToFile(data);
+        writeToDb(messageId, data);
     }
 
-    public void topic2Received(Message<TopicEventPayload> message) {
-        log.info("GET FROM CONSUMER-2: " + message.getData().content());
-        // PROCESS MESSAGE
-        processMessage(message.getData().content());
-    }
-
-    public void processMessage(String data) {
+    private void writeToFile(String data) {
         // write date to file
         try {
             FileWriter writer = new FileWriter("producer-1/file.txt", true);
@@ -58,6 +56,15 @@ public class MessageListener {
             bufferedWriter.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void writeToDb(String messageId, String data) {
+        Optional<EventProcessing> eventOptional = eventProcessingRepository.findByMessageId(messageId);
+        if (eventOptional.isPresent()) {
+            var eventProcessing = eventOptional.get();
+            eventProcessing.setStatus("PROCESSED");
+            eventProcessingRepository.save(eventProcessing);
         }
     }
 }

@@ -21,6 +21,9 @@ public class KafkaConfig {
     public static final String TOPIC_ALL_RESPONSE = "topic_all_response";
     public static final String TOPIC_REQUEST = "topic_1_request";
     public static final String TOPIC_RESPONSE = "topic_1_response";
+    public static final String CONSUMER_ID = "consumer_1";
+    public static final String CONSUMER_GROUP = "consumer_1";
+
     private final KafkaProperties kafkaProperties; // Autowired. Get data from application.yaml (prefix = "spring.kafka")
 
 //    @Bean
